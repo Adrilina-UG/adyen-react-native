@@ -76,7 +76,7 @@ public struct ApplepayConfigurationParser {
         return .init(summaryItems: summaryItems,
                      merchantIdentifier: merchantID,
                      requiredShippingContactFields: [.postalAddress],
-                     shippingContact: ApplePayKeys.shippingContact,
+                     billingContact: ApplePayKeys.billingContact,
                      allowOnboarding: allowOnboarding
                      )
     }
