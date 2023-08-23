@@ -75,7 +75,10 @@ public struct ApplepayConfigurationParser {
         }
         return .init(summaryItems: summaryItems,
                      merchantIdentifier: merchantID,
-                     allowOnboarding: allowOnboarding)
+                     allowOnboarding: allowOnboarding,
+                     requiredShippingContactFields: [.postalAddress],
+                     shippingContact: [.postalAddress],
+                    )
     }
 
 }

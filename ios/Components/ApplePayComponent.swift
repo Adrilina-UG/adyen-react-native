@@ -57,8 +57,46 @@ final internal class ApplePayComponent: BaseModule {
 extension ApplePayComponent: PaymentComponentDelegate {
 
     internal func didSubmit(_ data: PaymentComponentData, from component: PaymentComponent) {
-        sendEvent(event: .didSubmit, body: data.jsonObject)
+        // Extract the shipping address from the data
+        if let shippingContact = data.paymentMethod.encodable as? ApplePayKeys.shippingContact,
+        let postalAddress = shippingContact.postalAddress {
+            
+            // Perform the validation on the postal address
+            if !isValid(postalAddress: postalAddress) {
+                // Cancel the payment if the address is not valid
+                cancelPayment(from: component)
+                sendEvent(event: .didFail, body: ["error": "Invalid postal address"])
+                return
+            }
+            sendEvent(event: .didSubmit, body: data.jsonObject)
+        }
     }
+
+    private func isValid(postalAddress: CNPostalAddress) -> Bool {
+    // Check if the street property is available
+        guard let street = postalAddress.street else {
+            return false
+        }
+
+        if street.count > 50 {
+            return false
+        }
+
+        let components = street.split(separator: " ")
+        
+        if components.count < 2 {
+            return false
+        }
+        
+        // Check that the first component (assumed to be the street number) is a number
+        if let streetNumber = components.first, Int(streetNumber) == nil {
+            return false
+        }
+
+        return true
+    }
+
+
 
     internal func didFail(with error: Error, from component: PaymentComponent) {
         sendEvent(error: error)
