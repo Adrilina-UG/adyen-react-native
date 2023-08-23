@@ -29,8 +29,6 @@ public struct ApplepayConfigurationParser {
         return dict[ApplePayKeys.merchantID] as? String
     }
 
-    var pass = passLibrary.passes
-
     var merchantName: String? {
         return dict[ApplePayKeys.merchantName] as? String
     }
