@@ -77,7 +77,6 @@ public struct ApplepayConfigurationParser {
                      merchantIdentifier: merchantID,
                      allowOnboarding: allowOnboarding,
                      requiredShippingContactFields: [.postalAddress],
-                     shippingContact: [.postalAddress],
                     )
     }
 
