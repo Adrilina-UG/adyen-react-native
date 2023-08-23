@@ -96,6 +96,29 @@ export interface ApplePayConfiguration {
   allowOnboarding?: boolean;
   /** The line items for this payment. The last element of this array must contain the same value as `amount` on the Checkout `\payments` API request. **WARNING**: Adyen uses integer minor units, whereas Apple uses `NSDecimalNumber`. */
   summaryItems?: [ApplePaySummaryItem];
+
+  shippingAddress?: ApplePayShippingAddress
+}
+
+/**An object that defines a stored shipping address on file  */
+export interface ApplePayShippingAddress {
+  name?: String;
+  
+  postalAddress?: ApplePayPostalAddress;
+
+  phoneNumber?: String;
+
+  emailAddress?: String;
+}
+
+
+export interface ApplePayPostalAddress {
+  street: String;
+  city: String;
+  state:String;
+  postalCode: String;
+  country:String;
+  isCountryCode: String
 }
 
 /** An object that defines a summary item in a payment request—for example, total, tax, discount, or grand total. */

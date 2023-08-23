@@ -58,12 +58,22 @@ public struct ApplepayConfigurationParser {
         return summaryItems.isEmpty ? nil : summaryItems
     }
 
+    var shippingContact: PKContact? {
+        guard let shippingAddress = dict[ApplePayKeys.shippingAddress] as? NSObject else {
+            return nil
+        }
+
+        print("ADDRESS", shippingAddress)
+       
+
+
+
+    }
+
     public func buildConfiguration(amount: Amount) throws -> Adyen.ApplePayComponent.Configuration {
         guard let merchantID = merchantID else {
             throw ApplePayError.invalidMerchantID
         }
-
-        print("Got pass data: \(self.pass)")
         
         let summaryItems: [PKPaymentSummaryItem]
         if let summaryItemsFromConfig = self.summaryItems {
@@ -79,19 +89,30 @@ public struct ApplepayConfigurationParser {
             summaryItems = [PKPaymentSummaryItem(label: merchantName, amount: amount)]
             
         }
+
+        let shippingContact: PKContact?
+
+        if let shippingItemsFromConfig: PKContact? = self.shippingContact {
+            shippingContact = shippingItemsFromConfig
+        }else{
+            shippingContact = nil
+        }
+
+        //  {
+        //                 if let paymentPass = pass.paymentPass,
+        //                     let primaryAccountIdentifier = paymentPass.primaryAccountIdentifier {
+        //                         let billingContact = PKContact(personNameComponents: primaryAccountIdentifier.billingContactName,
+        //                                                     postalAddress: primaryAccountIdentifier.billingPostalAddress)
+        //                         return billingContact
+        //                     } else {
+        //                         return nil
+        //                     }
+        //                 }()
+
         return .init(summaryItems: summaryItems,
                      merchantIdentifier: merchantID,
                      requiredShippingContactFields: [.postalAddress],
-                     billingContact: {
-                        if let paymentPass = pass.paymentPass,
-                            let primaryAccountIdentifier = paymentPass.primaryAccountIdentifier {
-                                let billingContact = PKContact(personNameComponents: primaryAccountIdentifier.billingContactName,
-                                                            postalAddress: primaryAccountIdentifier.billingPostalAddress)
-                                return billingContact
-                            } else {
-                                return nil
-                            }
-                        }(),
+                     shippingContact:shippingContact,
                      allowOnboarding: allowOnboarding
                      )
     }

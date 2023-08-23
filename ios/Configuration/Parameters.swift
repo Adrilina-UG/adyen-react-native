@@ -53,7 +53,7 @@ internal enum ApplePayKeys: SubConfig {
     static var summaryItems = "summaryItems"
     static var summaryItemsLabel = "label"
     static var summaryItemsValue = "value"
-    static var billingContact = "billingContact"
+    static var shippingAddress = "shippingAddress"
 }
 
 internal enum StyleKeys: SubConfig {
