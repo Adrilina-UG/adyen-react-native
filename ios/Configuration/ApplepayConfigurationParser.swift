@@ -7,6 +7,8 @@
 import Adyen
 import PassKit
 
+let passLibrary = PKPassLibrary()
+
 public struct ApplepayConfigurationParser {
 
     private var dict: [String:Any]
@@ -26,6 +28,8 @@ public struct ApplepayConfigurationParser {
     var merchantID: String? {
         return dict[ApplePayKeys.merchantID] as? String
     }
+
+    var pass = passLibrary.passes
 
     var merchantName: String? {
         return dict[ApplePayKeys.merchantName] as? String
@@ -58,6 +62,8 @@ public struct ApplepayConfigurationParser {
         guard let merchantID = merchantID else {
             throw ApplePayError.invalidMerchantID
         }
+
+        print("Got pass data: \(self.pass)")
         
         let summaryItems: [PKPaymentSummaryItem]
         if let summaryItemsFromConfig = self.summaryItems {
@@ -76,7 +82,16 @@ public struct ApplepayConfigurationParser {
         return .init(summaryItems: summaryItems,
                      merchantIdentifier: merchantID,
                      requiredShippingContactFields: [.postalAddress],
-                     billingContact: ApplePayKeys.billingContact,
+                     billingContact: {
+                        if let paymentPass = pass.paymentPass,
+                            let primaryAccountIdentifier = paymentPass.primaryAccountIdentifier {
+                                let billingContact = PKContact(personNameComponents: primaryAccountIdentifier.billingContactName,
+                                                            postalAddress: primaryAccountIdentifier.billingPostalAddress)
+                                return billingContact
+                            } else {
+                                return nil
+                            }
+                        }(),
                      allowOnboarding: allowOnboarding
                      )
     }
