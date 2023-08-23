@@ -56,7 +56,7 @@ public struct ApplepayConfigurationParser {
         return summaryItems.isEmpty ? nil : summaryItems
     }
 
-    var shippingContact: PKContact? {
+    var billingContact: PKContact? {
         guard let shippingAddress = dict[ApplePayKeys.shippingAddress] as? NSObject else {
             return nil
         }
@@ -88,12 +88,12 @@ public struct ApplepayConfigurationParser {
             
         }
 
-        let shippingContact: PKContact?
+        let billingContact: PKContact?
 
-        if let shippingItemsFromConfig: PKContact? = self.shippingContact {
-            shippingContact = shippingItemsFromConfig
+        if let shippingItemsFromConfig: PKContact? = self.billingContact {
+            billingContact = shippingItemsFromConfig
         }else{
-            shippingContact = nil
+            billingContact = nil
         }
 
         //  {
@@ -110,7 +110,7 @@ public struct ApplepayConfigurationParser {
         return .init(summaryItems: summaryItems,
                      merchantIdentifier: merchantID,
                      requiredShippingContactFields: [.postalAddress],
-                     shippingContact:shippingContact,
+                     billingContact:billingContact,
                      allowOnboarding: allowOnboarding
                      )
     }
